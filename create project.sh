@@ -40,8 +40,8 @@ if [ "$projecttype" == "new" ]; then
 fi
 
 # install dependencies
-start yarn install
-start composer install
+yarn install &
+composer install &
 
 # create repo
 git init
@@ -76,7 +76,7 @@ SECURE_AUTH_SALT='generateme'
 LOGGED_IN_SALT='generateme'
 NONCE_SALT='generateme'
 EOF
-read -p "wait for composer and yarn to finish. Add site before pressing ENTER to continue"
+read -p "Add site before pressing ENTER to continue"
 
 # generate salts for the .env file
 wp dotenv salts generate
