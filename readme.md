@@ -10,7 +10,7 @@ The script does the following tasks when running:
 * clones [BedRock](https://github.com/roots/bedrock) in this folder
 * removes .git folders from the bedrock clone
 * clones [BasePlate](https://github.com/Levdbas/BasePlate) in rhe theme folders and moves all the files to the right folders, removes .git folder as well
-* runs yarn for npm packages
+* runs yarn for npm packages with fallback to npm install
 * runs composer
 * creates git repo in the project folder, adds *node_modules* to the *.gitignore*
 * creates .env file and fills it with correct values (check if values are correct for you)
