@@ -9,6 +9,8 @@ username="username" # set username, could be a read input as well
 password="password" # set admin password, could be a read input as well in the future.
 email="someone@something.com" # set admin email
 tld="local" # you could use dev, local, test or antything of your liking without the first dot.
+DBuser="root" #mysql database user
+DBpassword="root" #mysql database user password
 
 echo "Setting up some variables for the install"
 
@@ -62,50 +64,31 @@ git init
 echo 'node_modules/*' >> .gitignore
 
 # create database
-mysql -uroot -proot -e "CREATE DATABASE $projectname"
+mysql -u$DBuser -p$DBpassword -e "CREATE DATABASE $projectname"
 
+# set browsersync URL in config file.
 sed -i '2s/.*/" browserSyncURL": "'$projectname.$tld'",/' $htdocs/$projectname.$tld/assets/config.json
 
-# creating .env file, could be created with the dotenv package as well. To do in the future.
-echo "Creating .env file"
-cat > .env << EOF
-DB_NAME=$projectname
-DB_USER=root
-DB_PASSWORD=root
-# Optional variables
-# DB_HOST=$tldhost
-# DB_PREFIX=wp_
-
-WP_ENV=development
-WP_HOME=http://$projectname.$tld
-WP_SITEURL=http://$projectname.$tld/wp
-
-# Generate your keys here: https://roots.io/salts.html
-AUTH_KEY='generateme'
-SECURE_AUTH_KEY='generateme'
-LOGGED_IN_KEY='generateme'
-NONCE_KEY='generateme'
-AUTH_SALT='generateme'
-SECURE_AUTH_SALT='generateme'
-LOGGED_IN_SALT='generateme'
-NONCE_SALT='generateme'
-EOF
-read -p "Add site to AMP stack before pressing ENTER to continue"
-
-
-
+read -p "Script will try to install WP with WP-cli, $(tput setaf 3)$(tput smul)add site to your AMP stack before pressing enter to continue. $(tput sgr 0)"
 if which wp > /dev/null
 then
-    echo "WP CLI installed, running WP install"
-    # install WordPress with vars from start of this file.
-    wp core install --url="http://$projectname.$tld" --title="$projectname" --admin_user="$username" --admin_password="$password" --admin_email="$email"
+echo "WP CLI installed, continuing install"
+echo "Creating .env file"
+wp dotenv init --template=.env.example --with-salts
+wp dotenv set DB_NAME $projectname
+wp dotenv set DB_USER $DBuser
+wp dotenv set DB_PASSWORD $DBpassword
+wp dotenv set WP_HOME http://$projectname.$tld
+wp dotenv set WP_SITEURL http://$projectname.$tld/wp
 
-    # block search engines
-    wp option set blog_public 0
+echo "Installing WordPress"
+# install WordPress with vars from start of this file.
+wp core install --url="http://$projectname.$tld" --title="$projectname" --admin_user="$username" --admin_password="$password" --admin_email="$email"
 
-    # generate salts for the .env file
-    wp dotenv salts generate
+echo "Block search engines"
+# block search engines
+wp option set blog_public 0
 else
-    echo "WP CLI not installed, skipping WP install"
+    echo "$(tput setaf 1)WP CLI not installed, skipping WP install$(tput sgr 0)"
 fi
 read -p "All done, press enter to close..."
