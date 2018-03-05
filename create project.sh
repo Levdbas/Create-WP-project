@@ -42,12 +42,12 @@ if [ "$projecttype" == "new" ]; then
 fi
 
 # install dependencies
-if command --version yarn &>/dev/null; then
-    echo "Yarn isn't installed, falling back to npm install"
-    npm install &
+if yarn install; then
+  yarn install &
+  echo "Yarn is installed."
 else
-    echo "Yarn is installed."
-    yarn install &
+  echo "Yarn isn't installed, falling back to npm install"
+  npm install &
 fi
 
 composer install &
@@ -63,6 +63,8 @@ echo 'node_modules/*' >> .gitignore
 
 # create database
 mysql -uroot -proot -e "CREATE DATABASE $projectname"
+
+sed -i '2s/.*/" browserSyncURL": "'$projectname.$tld'",/' $htdocs/$projectname.$tld/assets/config.json
 
 # creating .env file, could be created with the dotenv package as well. To do in the future.
 echo "Creating .env file"
