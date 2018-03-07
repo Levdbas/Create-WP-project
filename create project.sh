@@ -19,6 +19,8 @@ if [ "$projecttype" == "new" ]; then
   read -p 'WordPress username:' username
   read -p 'WordPress user E-Mail:' email
   read -p 'WordPress username password:' password
+else
+  read -p 'repo URL:' repo
 fi
 
 echo "$(tput setaf 2)Setting up a $projecttype project in $projectname.$tld$(tput sgr 0)"
@@ -55,9 +57,13 @@ if [ "$projecttype" == "new" ]; then
   # adding node modules to .gitignore
   echo 'node_modules/*' >> .gitignore
 
-  # create database
-  mysql -u$DBuser -p$DBpassword -e "CREATE DATABASE $projectname"
+else
+   echo "$(tput setaf 2)Cloning your repo$(tput sgr 0)"
+   git clone $repo .
 fi
+
+# create database
+mysql -u$DBuser -p$DBpassword -e "CREATE DATABASE $projectname"
 
 # install dependencies
 if yarn --info; then
@@ -74,8 +80,10 @@ composer install &
 wait
 
 # set browsersync URL in config file.
-sed -i '2s/.*/"browserSyncURL": "'$projectname.$tld'",/' $htdocs/$projectname.$tld/assets/config.json
-sed -i '3s/.*/"themePath": "web/app/themes/'$projectname'",/' $htdocs/$projectname.$tld/assets/config.json
+if [ "$projecttype" == "new" ]; then
+  sed -i '2s/.*/"browserSyncURL": "'$projectname.$tld'",/' $htdocs/$projectname.$tld/assets/config.json
+  sed -i '3s/.*/"themePath": "web/app/themes/'$projectname'",/' $htdocs/$projectname.$tld/assets/config.json
+fi
 
 read -p "$(tput setaf 3)Script will try to install WP with WP-cli, $(tput smul)add site to your AMP stack before pressing enter to continue$(tput sgr 0)"
 if wp --info; then
