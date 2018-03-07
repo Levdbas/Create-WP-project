@@ -5,50 +5,66 @@
 # instal dotenv with: wp package install aaemnnosttv/wp-cli-dotenv-command:^1.0
 
 htdocs="d:/MAMP/htdocs/" #set path to your project root. Could be a symlink or something like that as well?
-username="username" # set username, could be a read input as well
-password="password" # set admin password, could be a read input as well in the future.
-email="someone@something.com" # set admin email
 tld="local" # you could use dev, local, test or antything of your liking without the first dot.
 DBuser="root" #mysql database user
 DBpassword="root" #mysql database user password
 
-echo "Setting up some variables for the install"
+read -p "Starting script $(tput setaf 3)$(tput smul)make sure your AMP stack runs before you press enter to continue$(tput sgr 0)"
+echo "$(tput setaf 3)Setting up some variables for the install$(tput sgr 0)"
 
 read -p 'Project name (without extention):' projectname
 read -p 'Project type (new/existing):' projecttype
 
-echo "Setting up a $projecttype project in $projectname.$tld"
-cd
+if [ "$projecttype" == "new" ]; then
+  read -p 'WordPress username:' username
+  read -p 'WordPress user E-Mail:' email
+  read -p 'WordPress username password:' password
+fi
+
+echo "$(tput setaf 2)Setting up a $projecttype project in $projectname.$tld$(tput sgr 0)"
+
 # moves to htdocs folder
+cd
 cd $htdocs
 
 # created dir based on project name
 mkdir $projectname.$tld
 cd $projectname.$tld
+
 if [ "$projecttype" == "new" ]; then
 
   # cloning bedrock and removing unneeded dirs
-  echo "Cloning bedrock"
+  echo "$(tput setaf 2)Cloning bedrock$(tput sgr 0)"
   git clone https://github.com/roots/bedrock.git .
   rm -rf .git
   rm -rf .github
 
   # cloning baseplate, could add extra flavors in future
-  echo "Cloning BasePlate"
+  echo "$(tput setaf 2)Cloning BasePlate$(tput sgr 0)"
   git clone https://github.com/Levdbas/BasePlate.git $htdocs/$projectname.$tld/web/app/themes/$projectname
   rm -rf $htdocs/$projectname.$tld/web/app/themes/$projectname/.git
   mv $htdocs/$projectname.$tld/web/app/themes/$projectname/assets  $htdocs/$projectname.$tld/
   mv $htdocs/$projectname.$tld/web/app/themes/$projectname/app/*  $htdocs/$projectname.$tld/web/app/themes/$projectname/
   mv $htdocs/$projectname.$tld/web/app/themes/$projectname/package.json  $htdocs/$projectname.$tld/
   rm -rf $htdocs/$projectname.$tld/web/app/themes/$projectname/app/
+
+
+  # create repo
+  git init
+
+  # adding node modules to .gitignore
+  echo 'node_modules/*' >> .gitignore
+
+  # create database
+  mysql -u$DBuser -p$DBpassword -e "CREATE DATABASE $projectname"
 fi
 
 # install dependencies
-if yarn install; then
+if yarn --info; then
   yarn install &
-  echo "Yarn is installed."
+  echo "$(tput setaf 2)Yarn is installed.$(tput sgr 0)"
 else
-  echo "Yarn isn't installed, falling back to npm install"
+  echo "$(tput setaf 3)Yarn isn't installed, falling back to npm install$(tput sgr 0)"
   npm install &
 fi
 
@@ -57,38 +73,33 @@ composer install &
 # wait for the above three tasks to finish up.
 wait
 
-# create repo
-git init
-
-# adding node modules to .gitignore
-echo 'node_modules/*' >> .gitignore
-
-# create database
-mysql -u$DBuser -p$DBpassword -e "CREATE DATABASE $projectname"
-
 # set browsersync URL in config file.
 sed -i '2s/.*/" browserSyncURL": "'$projectname.$tld'",/' $htdocs/$projectname.$tld/assets/config.json
 
-read -p "Script will try to install WP with WP-cli, $(tput setaf 3)$(tput smul)add site to your AMP stack before pressing enter to continue. $(tput sgr 0)"
-if which wp > /dev/null
-then
-echo "WP CLI installed, continuing install"
-echo "Creating .env file"
-wp dotenv init --template=.env.example --with-salts
-wp dotenv set DB_NAME $projectname
-wp dotenv set DB_USER $DBuser
-wp dotenv set DB_PASSWORD $DBpassword
-wp dotenv set WP_HOME http://$projectname.$tld
-wp dotenv set WP_SITEURL http://$projectname.$tld/wp
+read -p "$(tput setaf 3)Script will try to install WP with WP-cli, $(tput smul)add site to your AMP stack before pressing enter to continue$(tput sgr 0)"
+if wp --info; then
+  echo "$(tput setaf 2)WP CLI installed, continuing install$(tput sgr 0)"
+  echo "Creating .env file"
+  wp dotenv init --template=.env.example --with-salts
+  wp dotenv set DB_NAME $projectname
+  wp dotenv set DB_USER $DBuser
+  wp dotenv set DB_PASSWORD $DBpassword
+  wp dotenv set WP_HOME http://$projectname.$tld
+  wp dotenv set WP_SITEURL http://$projectname.$tld/wp
 
-echo "Installing WordPress"
-# install WordPress with vars from start of this file.
-wp core install --url="http://$projectname.$tld" --title="$projectname" --admin_user="$username" --admin_password="$password" --admin_email="$email"
+  if [ "$projecttype" == "new" ]; then
+    echo "$(tput setaf 2)Installing WordPress$(tput sgr 0)"
+    # install WordPress with vars from start of this file.
+    wp core install --url="http://$projectname.$tld" --title="$projectname" --admin_user="$username" --admin_password="$password" --admin_email="$email"
 
-echo "Block search engines"
-# block search engines
-wp option set blog_public 0
+    # setting rewrite structure
+    wp rewrite structure '/%postname%/'
+
+    # setting active theme
+    wp theme activate $projectname
+  fi
+
 else
     echo "$(tput setaf 1)WP CLI not installed, skipping WP install$(tput sgr 0)"
 fi
-read -p "All done, press enter to close..."
+read -p "$(tput setaf 2)All done, press enter to close...$(tput sgr 0)"
