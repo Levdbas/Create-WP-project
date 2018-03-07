@@ -15,7 +15,7 @@ The script does the following tasks when running:
 * creates git repo in the project folder, adds *node_modules* to the *.gitignore*
 * creates .env file and fills it with correct values (check if values are correct for you)
 * generates and sets salts in .env file
-* installs WordPress with wp-cli & blocks search engines in the WP settings
+* installs WordPress with wp-cli, sets permalink structure and active theme.
 
 ## Prerequisites
 

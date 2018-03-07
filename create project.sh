@@ -61,8 +61,8 @@ fi
 
 # install dependencies
 if yarn --info; then
-  yarn install &
   echo "$(tput setaf 2)Yarn is installed.$(tput sgr 0)"
+  yarn install &
 else
   echo "$(tput setaf 3)Yarn isn't installed, falling back to npm install$(tput sgr 0)"
   npm install &
@@ -74,7 +74,8 @@ composer install &
 wait
 
 # set browsersync URL in config file.
-sed -i '2s/.*/" browserSyncURL": "'$projectname.$tld'",/' $htdocs/$projectname.$tld/assets/config.json
+sed -i '2s/.*/"browserSyncURL": "'$projectname.$tld'",/' $htdocs/$projectname.$tld/assets/config.json
+sed -i '3s/.*/"themePath": "web/app/themes/'$projectname'",/' $htdocs/$projectname.$tld/assets/config.json
 
 read -p "$(tput setaf 3)Script will try to install WP with WP-cli, $(tput smul)add site to your AMP stack before pressing enter to continue$(tput sgr 0)"
 if wp --info; then
