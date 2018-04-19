@@ -8,6 +8,8 @@ htdocs="d:/MAMP/htdocs/" #set path to your project root. Could be a symlink or s
 tld="local" # you could use dev, local, test or antything of your liking without the first dot.
 DBuser="root" #mysql database user
 DBpassword="root" #mysql database user password
+BasePlate = "https://github.com/Levdbas/BasePlate.git";
+wp-lemon = "git@bitbucket.org:studiolemon/wp-lemon.git";
 
 read -p "Starting script $(tput setaf 3)$(tput smul)make sure your AMP stack runs before you press enter to continue$(tput sgr 0)"
 echo "$(tput setaf 3)Setting up some variables for the install$(tput sgr 0)"
@@ -16,6 +18,14 @@ read -p 'Project name (without extention):' projectname
 read -p 'Project type (new/existing):' projecttype
 
 if [ "$projecttype" == "new" ]; then
+  read -p 'wp-lemon or BasePlate:' theme
+
+  # setting up proper project url
+  if [ "$theme" == "BasePlate" ]; then
+    theme = BasePlate
+  else
+    theme = wp-lemon
+  fi
   read -p 'WordPress username:' username
   read -p 'WordPress user E-Mail:' email
   read -p 'WordPress username password:' password
@@ -36,14 +46,16 @@ cd $projectname.$tld
 if [ "$projecttype" == "new" ]; then
 
   # cloning bedrock and removing unneeded dirs
-  echo "$(tput setaf 2)Cloning bedrock$(tput sgr 0)"
+  echo "$(tput setaf 2)Cloning BedRock $(tput sgr 0)"
   git clone https://github.com/roots/bedrock.git .
   rm -rf .git
   rm -rf .github
 
   # cloning baseplate, could add extra flavors in future
-  echo "$(tput setaf 2)Cloning BasePlate$(tput sgr 0)"
-  git clone https://github.com/Levdbas/BasePlate.git $htdocs/$projectname.$tld/web/app/themes/$projectname
+  echo "$(tput setaf 2)Cloning $theme $(tput sgr 0)"
+
+  git clone $theme $htdocs/$projectname.$tld/web/app/themes/$projectname
+
   rm -rf $htdocs/$projectname.$tld/web/app/themes/$projectname/.git
   mv $htdocs/$projectname.$tld/web/app/themes/$projectname/assets  $htdocs/$projectname.$tld/
   mv $htdocs/$projectname.$tld/web/app/themes/$projectname/app/*  $htdocs/$projectname.$tld/web/app/themes/$projectname/
