@@ -4,13 +4,13 @@
 # install wp-cli with: composer global require wp-cli/wp-cli
 # instal dotenv with: wp package install aaemnnosttv/wp-cli-dotenv-command:^1.0
 
-htdocs="d:/MAMP/htdocs/" #set path to your project root. Could be a symlink or something like that as well?
+htdocs="d:/MAMP/htdocs" #set path to your project root. Could be a symlink or something like that as well?
 tld="local" # you could use dev, local, test or antything of your liking without the first dot.
 DBuser="root" #mysql database user
 DBpassword="root" #mysql database user password
-BasePlate = "https://github.com/Levdbas/BasePlate.git";
-wp-lemon = "git@bitbucket.org:studiolemon/wp-lemon.git";
-
+BasePlate="https://github.com/Levdbas/BasePlate.git";
+wplemon="git@bitbucket.org:studiolemon/wplemon.git -b new-webpack-setup"
+echo $wplemon;
 read -p "Starting script $(tput setaf 3)$(tput smul)make sure your AMP stack runs before you press enter to continue$(tput sgr 0)"
 echo "$(tput setaf 3)Setting up some variables for the install$(tput sgr 0)"
 
@@ -18,17 +18,18 @@ read -p 'Project name (without extention):' projectname
 read -p 'Project type (new/existing):' projecttype
 
 if [ "$projecttype" == "new" ]; then
-  read -p 'wp-lemon or BasePlate:' theme
+  read -p 'wplemon or BasePlate:' theme
 
   # setting up proper project url
   if [ "$theme" == "BasePlate" ]; then
-    theme = BasePlate
+    theme=$BasePlate
   else
-    theme = wp-lemon
+    theme=$wplemon
   fi
+  echo $theme
   read -p 'WordPress username:' username
-  read -p 'WordPress user E-Mail:' email
   read -p 'WordPress username password:' password
+  read -p 'WordPress user E-Mail:' email
 else
   read -p 'repo URL:' repo
 fi
@@ -51,7 +52,7 @@ if [ "$projecttype" == "new" ]; then
   rm -rf .git
   rm -rf .github
 
-  # cloning baseplate, could add extra flavors in future
+  # cloning theme
   echo "$(tput setaf 2)Cloning $theme $(tput sgr 0)"
 
   git clone $theme $htdocs/$projectname.$tld/web/app/themes/$projectname
