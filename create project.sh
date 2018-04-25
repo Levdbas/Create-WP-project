@@ -9,7 +9,7 @@ tld="local" # you could use dev, local, test or antything of your liking without
 DBuser="root" #mysql database user
 DBpassword="root" #mysql database user password
 BasePlate="https://github.com/Levdbas/BasePlate.git";
-wplemon="git@bitbucket.org:studiolemon/wplemon.git -b new-webpack-setup"
+wplemon="git@bitbucket.org:studiolemon/wp-lemon.git -b new-webpack-setup"
 echo $wplemon;
 read -p "Starting script $(tput setaf 3)$(tput smul)make sure your AMP stack runs before you press enter to continue$(tput sgr 0)"
 echo "$(tput setaf 3)Setting up some variables for the install$(tput sgr 0)"
@@ -102,7 +102,7 @@ read -p "$(tput setaf 3)Script will try to install WP with WP-cli, $(tput smul)a
 if wp --info; then
   echo "$(tput setaf 2)WP CLI installed, continuing install$(tput sgr 0)"
   echo "Creating .env file"
-  wp dotenv init --template=.env.example --with-salts
+  wp dotenv init --template=.env.example
   wp dotenv set DB_NAME $projectname
   wp dotenv set DB_USER $DBuser
   wp dotenv set DB_PASSWORD $DBpassword
