@@ -9,7 +9,7 @@ tld="local" # you could use dev, local, test or antything of your liking without
 DBuser="root" #mysql database user
 DBpassword="root" #mysql database user password
 BasePlate="https://github.com/Levdbas/BasePlate.git";
-wplemon="git@bitbucket.org:studiolemon/wp-lemon.git -b new-webpack-setup"
+wplemon="https://Levdbas@bitbucket.org/studiolemon/wp-lemon.git -b new-webpack-setup"
 echo $wplemon;
 read -p "Starting script $(tput setaf 3)$(tput smul)make sure your AMP stack runs before you press enter to continue$(tput sgr 0)"
 echo "$(tput setaf 3)Setting up some variables for the install$(tput sgr 0)"
@@ -95,7 +95,7 @@ wait
 # set browsersync URL in config file.
 if [ "$projecttype" == "new" ]; then
   sed -i '2s/.*/"browserSyncURL": "'$projectname.$tld'",/' $htdocs/$projectname.$tld/assets/config.json
-  sed -i '3s/.*/"themePath": "web/app/themes/'$projectname'",/' $htdocs/$projectname.$tld/assets/config.json
+  sed -i '4s/.*/"themePath": "web/app/themes/'$projectname'",/' $htdocs/$projectname.$tld/assets/config.json
 fi
 
 read -p "$(tput setaf 3)Script will try to install WP with WP-cli, $(tput smul)add site to your AMP stack before pressing enter to continue$(tput sgr 0)"
