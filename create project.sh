@@ -9,8 +9,6 @@ tld="local" # you could use dev, local, test or antything of your liking without
 DBuser="root" #mysql database user
 DBpassword="root" #mysql database user password
 BasePlate="https://github.com/Levdbas/BasePlate.git";
-wplemon="https://Levdbas@bitbucket.org/studiolemon/wp-lemon.git -b new-webpack-setup"
-echo $wplemon;
 read -p "Starting script $(tput setaf 3)$(tput smul)make sure your AMP stack runs before you press enter to continue$(tput sgr 0)"
 echo "$(tput setaf 3)Setting up some variables for the install$(tput sgr 0)"
 
@@ -18,13 +16,11 @@ read -p 'Project name (without extention):' projectname
 read -p 'Project type (new/existing):' projecttype
 
 if [ "$projecttype" == "new" ]; then
-  read -p 'wplemon or BasePlate:' theme
+  read -p 'Options: BasePlate' theme
 
   # setting up proper project url
   if [ "$theme" == "BasePlate" ]; then
     theme=$BasePlate
-  else
-    theme=$wplemon
   fi
   echo $theme
   read -p 'WordPress username:' username
