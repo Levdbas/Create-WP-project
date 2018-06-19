@@ -102,7 +102,7 @@ read -p "$(tput setaf 3)Script will try to install WP with WP-cli, $(tput smul)a
 if wp --info; then
   echo "$(tput setaf 2)WP CLI installed, continuing install$(tput sgr 0)"
   echo "Creating .env file"
-  wp dotenv init --template=.env.example
+  wp dotenv init --template=.env.example --with-salts
   wp dotenv set DB_NAME $projectname
   wp dotenv set DB_USER $DBuser
   wp dotenv set DB_PASSWORD $DBpassword
