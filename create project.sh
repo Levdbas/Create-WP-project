@@ -16,13 +16,7 @@ read -p 'Project name (without extention):' projectname
 read -p 'Project type (new/existing):' projecttype
 
 if [ "$projecttype" == "new" ]; then
-  read -p 'Options: BasePlate' theme
-
-  # setting up proper project url
-  if [ "$theme" == "BasePlate" ]; then
-    theme=$BasePlate
-  fi
-  echo $theme
+  theme=$BasePlate
   read -p 'WordPress username:' username
   read -p 'WordPress username password:' password
   read -p 'WordPress user E-Mail:' email
