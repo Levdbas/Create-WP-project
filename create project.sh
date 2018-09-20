@@ -85,7 +85,7 @@ wait
 # set browsersync URL in config file.
 if [ "$projecttype" == "new" ]; then
   sed -i '2s/.*/"browserSyncURL": "'$projectname.$tld'",/' $htdocs/$projectname.$tld/assets/config.json
-  sed -i '4s/.*/"themePath": "web/app/themes/'$projectname'",/' $htdocs/$projectname.$tld/assets/config.json
+  sed -i '3s/.*/"themePath": "web/app/themes/'$projectname'",/' $htdocs/$projectname.$tld/assets/config.json
 fi
 
 read -p "$(tput setaf 3)Script will try to install WP with WP-cli, $(tput smul)add site to your AMP stack before pressing enter to continue$(tput sgr 0)"
@@ -114,4 +114,7 @@ if wp --info; then
 else
     echo "$(tput setaf 1)WP CLI not installed, skipping WP install$(tput sgr 0)"
 fi
+echo "running build for the first time"
+npm run dev
+
 read -p "$(tput setaf 2)All done, press enter to close...$(tput sgr 0)"
