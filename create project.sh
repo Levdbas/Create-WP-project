@@ -17,11 +17,12 @@ read -p 'Project type (new/existing):' projecttype
 
 if [ "$projecttype" == "new" ]; then
   theme=$BasePlate
+  read -p "Project repository": project-repo
   read -p 'WordPress username:' username
   read -p 'WordPress username password:' password
   read -p 'WordPress user E-Mail:' email
 else
-  read -p 'repo URL:' repo
+  read -p 'Existing project repo adress:' repo
 fi
 
 echo "$(tput setaf 2)Setting up a $projecttype project in $projectname.$tld$(tput sgr 0)"
@@ -59,7 +60,7 @@ if [ "$projecttype" == "new" ]; then
 
   # create repo
   git init
-
+  git remote add origin $project-repo
   # adding node modules to .gitignore
   echo 'node_modules/*' >> .gitignore
 
@@ -112,6 +113,9 @@ if wp --info; then
 
     # setting active theme
     wp theme activate $projectname
+
+    wp post update 2 --post_title='Home'
+    wp option update page_on_front 2
   fi
 
 else
