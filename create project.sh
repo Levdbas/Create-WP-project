@@ -44,15 +44,18 @@ if [ "$projecttype" == "new" ]; then
 
   # cloning theme
   echo "$(tput setaf 2)Cloning $theme $(tput sgr 0)"
-
   git clone $theme $htdocs/$projectname.$tld/web/app/themes/$projectname
 
+  # remove unneeded files
   rm -rf $htdocs/$projectname.$tld/web/app/themes/$projectname/.git
+  rm -rf $htdocs/$projectname.$tld/web/app/themes/$projectname/app/composer.json
+  rm -rf $htdocs/$projectname.$tld/web/app/themes/$projectname/app/composer.lock
+
+  #move assets / package to root of project.
   mv $htdocs/$projectname.$tld/web/app/themes/$projectname/assets  $htdocs/$projectname.$tld/
   mv $htdocs/$projectname.$tld/web/app/themes/$projectname/app/*  $htdocs/$projectname.$tld/web/app/themes/$projectname/
   mv $htdocs/$projectname.$tld/web/app/themes/$projectname/package.json  $htdocs/$projectname.$tld/
   rm -rf $htdocs/$projectname.$tld/web/app/themes/$projectname/app/
-
 
   # create repo
   git init
