@@ -63,7 +63,7 @@ if [ "$projecttype" == "new" ]; then
   git remote add origin $project-repo
   # adding node modules to .gitignore
   echo 'node_modules/*' >> .gitignore
-
+  echo '.vscode/*' >> .gitignore
 else
    echo "$(tput setaf 2)Cloning your repo$(tput sgr 0)"
    git clone $repo .
