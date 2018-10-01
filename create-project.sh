@@ -106,27 +106,27 @@ if wp --info; then
   echo "Creating .env file"
   wp dotenv init --template=.env.example --with-salts
   if grep -q Microsoft /proc/version; then
-    wp dotenv set DB_HOST 127.0.0.1
+    read -p "$(tput setaf 3)Uncomment #DB_host and change to 127.0.0.1 before pressing enter to continue$(tput sgr 0)"
   fi
-  wp dotenv set DB_NAME $projectname --allow-root
-  wp dotenv set DB_USER $DBuser --allow-root
-  wp dotenv set DB_PASSWORD $DBpassword --allow-root
-  wp dotenv set WP_HOME http://$projectname.$tld --allow-root
-  wp dotenv set WP_SITEURL http://$projectname.$tld/wp --allow-root
+  wp --allow-root dotenv set DB_NAME $projectname
+  wp --allow-root dotenv set DB_USER $DBuser
+  wp --allow-root dotenv set DB_PASSWORD $DBpassword
+  wp --allow-root dotenv set WP_HOME http://$projectname.$tld
+  wp --allow-root dotenv set WP_SITEURL http://$projectname.$tld/wp
   if [ "$projecttype" == "new" ]; then
     echo "$(tput setaf 2)Installing WordPress$(tput sgr 0)"
     # install WordPress with vars from start of this file.
     wp core install --url="http://$projectname.$tld" --title="$projectname" --admin_user="$username" --admin_password="$password" --admin_email="$email" --allow-root
 
     # setting rewrite structure
-    wp rewrite structure '/%postname%/' --allow-root
+    wp --allow-root rewrite structure '/%postname%/' 
 
     # setting active theme
-    wp theme activate $projectname --allow-root
+    wp --allow-root theme activate $projectname
 
-    wp post update 2 --post_title='Home' --allow-root
-    wp option update show_on_front 'page' --allow-root
-    wp option update page_on_front 2 --allow-root
+    wp --allow-root post update 2 --post_title='Home'
+    wp --allow-root option update show_on_front 'page' 
+    wp --allow-root option update page_on_front 2
   fi
 
 else
