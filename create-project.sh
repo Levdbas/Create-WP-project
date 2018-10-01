@@ -108,11 +108,11 @@ if wp --info; then
   if grep -q Microsoft /proc/version; then
     wp dotenv set DB_HOST 127.0.0.1
   fi
-  wp dotenv set DB_NAME $projectname
-  wp dotenv set DB_USER $DBuser
-  wp dotenv set DB_PASSWORD $DBpassword
-  wp dotenv set WP_HOME http://$projectname.$tld
-  wp dotenv set WP_SITEURL http://$projectname.$tld/wp
+  wp dotenv set DB_NAME $projectname --allow-root
+  wp dotenv set DB_USER $DBuser --allow-root
+  wp dotenv set DB_PASSWORD $DBpassword --allow-root
+  wp dotenv set WP_HOME http://$projectname.$tld --allow-root
+  wp dotenv set WP_SITEURL http://$projectname.$tld/wp --allow-root
   if [ "$projecttype" == "new" ]; then
     echo "$(tput setaf 2)Installing WordPress$(tput sgr 0)"
     # install WordPress with vars from start of this file.
