@@ -116,17 +116,17 @@ if wp --info; then
   if [ "$projecttype" == "new" ]; then
     echo "$(tput setaf 2)Installing WordPress$(tput sgr 0)"
     # install WordPress with vars from start of this file.
-    wp core install --url="http://$projectname.$tld" --title="$projectname" --admin_user="$username" --admin_password="$password" --admin_email="$email"
+    wp core install --url="http://$projectname.$tld" --title="$projectname" --admin_user="$username" --admin_password="$password" --admin_email="$email" --allow-root
 
     # setting rewrite structure
-    wp rewrite structure '/%postname%/'
+    wp rewrite structure '/%postname%/' --allow-root
 
     # setting active theme
-    wp theme activate $projectname
+    wp theme activate $projectname --allow-root
 
-    wp post update 2 --post_title='Home'
-    wp option update show_on_front 'page'
-    wp option update page_on_front 2
+    wp post update 2 --post_title='Home' --allow-root
+    wp option update show_on_front 'page' --allow-root
+    wp option update page_on_front 2 --allow-root
   fi
 
 else
