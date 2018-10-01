@@ -1,10 +1,9 @@
-#!/bin/bash
+#! /bin/bash
 # Requirements
 # git, yarn, mysql in path, wp-cli and wp-cli-dotenv-command
 # install wp-cli with: composer global require wp-cli/wp-cli
 # instal dotenv with: wp package install aaemnnosttv/wp-cli-dotenv-command:^1.0
-. variables.config
-
+source ./config/variables.config
 # moves to htdocs folder
 cd
 cd $htdocs
@@ -75,8 +74,7 @@ else
 fi
 
 if grep -q Microsoft /proc/version; then
-  echo "Running on WSL, please create database $projectname manually"
-  read -p "$(tput setaf 2)Create database before continuing..$(tput sgr 0)"
+  mysql --host=127.0.0.1 -u$DBuser -p$DBpassword -e "CREATE DATABASE $projectname"
 else
   # create database
   mysql -u$DBuser -p$DBpassword -e "CREATE DATABASE $projectname"
@@ -99,7 +97,7 @@ wait
 # set browsersync URL in config file.
 if [ "$projecttype" == "new" ]; then
   sed -i '2s/.*/"browserSyncURL": "'$projectname.$tld'",/' $htdocs/$projectname.$tld/assets/config.json
-  sed -i '3s/.*/"themePath": "web/app/themes/'$projectname'",/' $htdocs/$projectname.$tld/assets/config.json
+  sed -i 's_"app"_"web/app/themes/'$projectname'"_g' $htdocs/$projectname.$tld/assets/config.json
 fi
 
 read -p "$(tput setaf 3)Script will try to install WP with WP-cli, add site to your AMP stack before pressing enter to continue$(tput sgr 0)"
@@ -107,12 +105,14 @@ if wp --info; then
   echo "$(tput setaf 2)WP CLI installed, continuing install$(tput sgr 0)"
   echo "Creating .env file"
   wp dotenv init --template=.env.example --with-salts
+  if grep -q Microsoft /proc/version; then
+    wp dotenv set DB_HOST 127.0.0.1
+  fi
   wp dotenv set DB_NAME $projectname
   wp dotenv set DB_USER $DBuser
   wp dotenv set DB_PASSWORD $DBpassword
   wp dotenv set WP_HOME http://$projectname.$tld
   wp dotenv set WP_SITEURL http://$projectname.$tld/wp
-
   if [ "$projecttype" == "new" ]; then
     echo "$(tput setaf 2)Installing WordPress$(tput sgr 0)"
     # install WordPress with vars from start of this file.
@@ -125,6 +125,7 @@ if wp --info; then
     wp theme activate $projectname
 
     wp post update 2 --post_title='Home'
+    wp option update show_on_front 'page'
     wp option update page_on_front 2
   fi
 
