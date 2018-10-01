@@ -3,37 +3,39 @@
 # git, yarn, mysql in path, wp-cli and wp-cli-dotenv-command
 # install wp-cli with: composer global require wp-cli/wp-cli
 # instal dotenv with: wp package install aaemnnosttv/wp-cli-dotenv-command:^1.0
-
-htdocs="d:/MAMP/htdocs" #set path to your project root. Could be a symlink or something like that as well?
-tld="local" # you could use dev, local, test or antything of your liking without the first dot.
-DBuser="root" #mysql database user
-DBpassword="root" #mysql database user password
-BasePlate="https://github.com/Levdbas/BasePlate.git";
-read -p "Starting script $(tput setaf 3)$(tput smul)make sure your AMP stack runs before you press enter to continue$(tput sgr 0)"
-echo "$(tput setaf 3)Setting up some variables for the install$(tput sgr 0)"
-
-read -p 'Project name (without extention):' projectname
-read -p 'Project type (new/existing):' projecttype
-
-if [ "$projecttype" == "new" ]; then
-  theme=$BasePlate
-  read -p "Project repository": project-repo
-  read -p 'WordPress username:' username
-  read -p 'WordPress username password:' password
-  read -p 'WordPress user E-Mail:' email
-else
-  read -p 'Existing project repo adress:' repo
-fi
-
-echo "$(tput setaf 2)Setting up a $projecttype project in $projectname.$tld$(tput sgr 0)"
+. variables.config
 
 # moves to htdocs folder
 cd
 cd $htdocs
 
+read -p "Starting script $(tput setaf 3)$(tput smul)make sure your AMP stack runs before you press enter to continue$(tput sgr 0)"
+echo "$(tput setaf 3)Setting up some variables for the install$(tput sgr 0)"
+
+read -p 'Project name (without extention):' projectname
+if [ -d "$projectname.$tld" ]; then
+  read -p 'Project folder already exists. Exiting.'
+  exit
+fi
+read -p 'Project type (new/existing):' projecttype
+
+if [ "$projecttype" == "new" ]; then
+  read -p "Project repository": project_repository
+  read -p 'WordPress username:' username
+  read -p 'WordPress username password:' password
+  read -p 'WordPress user E-Mail:' email
+else
+  read -p 'Existing project repo adress:' project_repository
+fi
+
+echo "$(tput setaf 2)Setting up a $projecttype project in $projectname.$tld$(tput sgr 0)"
+
+
+
 # created dir based on project name
-mkdir $projectname.$tld
-cd $projectname.$tld
+  mkdir $projectname.$tld
+  cd $projectname.$tld
+
 
 if [ "$projecttype" == "new" ]; then
 
@@ -60,17 +62,25 @@ if [ "$projecttype" == "new" ]; then
 
   # create repo
   git init
-  git remote add origin $project-repo
+
+  # add remote
+  git remote add origin $project_repository
+
   # adding node modules to .gitignore
   echo 'node_modules/*' >> .gitignore
   echo '.vscode/*' >> .gitignore
 else
    echo "$(tput setaf 2)Cloning your repo$(tput sgr 0)"
-   git clone $repo .
+   git clone $project_repository .
 fi
 
-# create database
-mysql -u$DBuser -p$DBpassword -e "CREATE DATABASE $projectname"
+if grep -q Microsoft /proc/version; then
+  echo "Running on WSL, please create database $projectname manually"
+  read -p "$(tput setaf 2)Create database before continuing..$(tput sgr 0)"
+else
+  # create database
+  mysql -u$DBuser -p$DBpassword -e "CREATE DATABASE $projectname"
+fi
 
 # install dependencies
 if yarn --info; then
@@ -92,7 +102,7 @@ if [ "$projecttype" == "new" ]; then
   sed -i '3s/.*/"themePath": "web/app/themes/'$projectname'",/' $htdocs/$projectname.$tld/assets/config.json
 fi
 
-read -p "$(tput setaf 3)Script will try to install WP with WP-cli, $(tput smul)add site to your AMP stack before pressing enter to continue$(tput sgr 0)"
+read -p "$(tput setaf 3)Script will try to install WP with WP-cli, add site to your AMP stack before pressing enter to continue$(tput sgr 0)"
 if wp --info; then
   echo "$(tput setaf 2)WP CLI installed, continuing install$(tput sgr 0)"
   echo "Creating .env file"
@@ -119,7 +129,7 @@ if wp --info; then
   fi
 
 else
-    echo "$(tput setaf 1)WP CLI not installed, skipping WP install$(tput sgr 0)"
+    read "$(tput setaf 1)WP CLI not installed, skipping WP install$(tput sgr 0)"
 fi
 echo "running build for the first time"
 npm run dev
