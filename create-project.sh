@@ -104,7 +104,7 @@ read -p "$(tput setaf 3)Script will try to install WP with WP-cli, add site to y
 if wp --info; then
   echo "$(tput setaf 2)WP CLI installed, continuing install$(tput sgr 0)"
   echo "Creating .env file"
-  wp dotenv init --template=.env.example --with-salts
+  wp --allow-root dotenv init --template=.env.example --with-salts
   if grep -q Microsoft /proc/version; then
     read -p "$(tput setaf 3)Uncomment #DB_host and change to 127.0.0.1 before pressing enter to continue$(tput sgr 0)"
   fi
