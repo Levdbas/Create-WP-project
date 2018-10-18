@@ -119,14 +119,15 @@ if wp --info; then
     wp core install --url="http://$projectname.$tld" --title="$projectname" --admin_user="$username" --admin_password="$password" --admin_email="$email" --allow-root
 
     # setting rewrite structure
-    wp --allow-root rewrite structure '/%postname%/' 
+    wp --allow-root rewrite structure '/%postname%/'
 
     # setting active theme
     wp --allow-root theme activate $projectname
 
     wp --allow-root post update 2 --post_title='Home'
-    wp --allow-root option update show_on_front 'page' 
+    wp --allow-root option update show_on_front 'page'
     wp --allow-root option update page_on_front 2
+    wp --allow-root comment delete 1 --force
   fi
 
 else
