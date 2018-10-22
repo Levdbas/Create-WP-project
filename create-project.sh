@@ -55,6 +55,8 @@ if [ "$projecttype" == "new" ]; then
 
   #move assets / package to root of project.
   mv $htdocs/$projectname.$tld/web/app/themes/$projectname/assets  $htdocs/$projectname.$tld/
+  mv $htdocs/$projectname.$tld/web/app/themes/$projectname/.prettierrc  $htdocs/$projectname.$tld/
+  mv $htdocs/$projectname.$tld/web/app/themes/$projectname/.stylelintrc  $htdocs/$projectname.$tld/
   mv $htdocs/$projectname.$tld/web/app/themes/$projectname/app/*  $htdocs/$projectname.$tld/web/app/themes/$projectname/
   mv $htdocs/$projectname.$tld/web/app/themes/$projectname/package.json  $htdocs/$projectname.$tld/
   rm -rf $htdocs/$projectname.$tld/web/app/themes/$projectname/app/
