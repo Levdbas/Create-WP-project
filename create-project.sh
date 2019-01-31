@@ -103,6 +103,10 @@ if [ "$projecttype" == "new" ]; then
 fi
 
 read -p "$(tput setaf 3)Script will try to install WP with WP-cli, add site to your AMP stack before pressing enter to continue$(tput sgr 0)"
+# reload host file so browsersync works without a restart.
+if grep -q Microsoft /proc/version; then
+  sudo cp /mnt/c/Windows/System32/drivers/etc/hosts /etc/hosts
+fi
 if wp --info; then
   echo "$(tput setaf 2)WP CLI installed, continuing install$(tput sgr 0)"
   echo "Creating .env file"
