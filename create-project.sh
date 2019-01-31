@@ -141,5 +141,5 @@ else
 fi
 echo "running build for the first time"
 npm run dev
-
-read -p "$(tput setaf 2)All done, press enter to close...$(tput sgr 0)"
+cd $htdocs/$projectname.$tld
+read -p "$(tput setaf 2)All done, moved to project folder root. Happy developing! $(tput sgr 0)"
