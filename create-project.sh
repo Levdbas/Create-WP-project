@@ -98,7 +98,7 @@ wait
 
 # set browsersync URL in config file.
 if [ "$projecttype" == "new" ]; then
-  sed -i '2s/.*/"browserSyncURL": "'$projectname.$tld'",/' $htdocs/$projectname.$tld/assets/config.json
+  sed -i '9s/.*/"browserSyncURL": "'$projectname.$tld'",/' $htdocs/$projectname.$tld/assets/config.json
   sed -i 's_"app"_"web/app/themes/'$projectname'"_g' $htdocs/$projectname.$tld/assets/config.json
 fi
 
@@ -142,5 +142,6 @@ else
 fi
 echo "running build for the first time"
 npm run dev
+cd ../../../../../../..
 cd $htdocs/$projectname.$tld
 read -p "$(tput setaf 2)All done, moved to project folder root. Happy developing! $(tput sgr 0)"
