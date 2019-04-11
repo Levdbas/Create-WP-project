@@ -91,6 +91,11 @@ else
   npm install &
 fi
 
+#adding plugins
+composer require wpackagist-plugin/worker
+composer require wpackagist-plugin/really-simple-ssl
+composer require wpackagist-plugin/wordpress-seo
+
 composer install &
 
 # wait for the above three tasks to finish up.
