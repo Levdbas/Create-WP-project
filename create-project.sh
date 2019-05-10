@@ -95,6 +95,7 @@ fi
 composer require wpackagist-plugin/worker
 composer require wpackagist-plugin/really-simple-ssl
 composer require wpackagist-plugin/wordpress-seo
+composer require wpackagist-plugin/be-media-from-production
 
 composer install &
 
