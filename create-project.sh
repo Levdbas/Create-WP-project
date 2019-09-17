@@ -139,6 +139,8 @@ if wp --info; then
     wp --allow-root post update 2 --post_title='Home'
     wp --allow-root option update show_on_front 'page'
     wp --allow-root option update page_on_front 2
+    wp --allow-root language core install nl_NL
+    wp --allow-root language core activate nl_NL
     wp --allow-root post delete 1 --force
     wp --allow-root comment delete 1 --force
   fi
